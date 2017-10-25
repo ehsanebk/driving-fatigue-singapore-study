@@ -19,13 +19,13 @@
     :ut 2.3
     
     ;;:microlapses nil
-    :fpbmc .02
+    :fpbmc .04
     :fpmc -.005
     
     :utbmc .01  
     :utmc -.0012
     
-    :fp-dec 0.01
+    :fp-dec 0.99
     
     :egs .25
     ;:cst t
