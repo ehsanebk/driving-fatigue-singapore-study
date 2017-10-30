@@ -232,27 +232,24 @@ public class PVT_model extends Task {
 			}
 
 			DecimalFormat df3 = new DecimalFormat("#.000");
-
-			getModel().output("\nAverage Number of lapses in the time points \n");
 			getModel().output("\t1 \t2 \t3 \t4 \t5");
+			
+			getModel().output("\nAverage Number of lapses in the time points \n");
 			getModel().output("\t" + totallLapsesValues[0].mean() + "\t"
 					+ totallLapsesValues[1].mean() + "\t" + totallLapsesValues[2].mean() + "\t"
 					+ totallLapsesValues[3].mean()+ "\t" + totallLapsesValues[4].mean());
 
 			getModel().output("\nAverage Number of false starts in the time points \n");
-			getModel().output("\t1 \t2 \t3 \t4 \t5");
 			getModel().output("\t" + totallFalseResponsesValues[0].mean() + "\t"
 					+ totallFalseResponsesValues[1].mean() + "\t" + totallFalseResponsesValues[2].mean() + "\t"
 					+ totallFalseResponsesValues[3].mean()+ "\t" + totallFalseResponsesValues[4].mean());
 			
 			getModel().output("\nAverage Number of alert responses in the time points \n");
-			getModel().output("\t1 \t2 \t3 \t4 \t5");
 			getModel().output("\t" + totallAlertValues[0].mean() + "\t"
 					+ totallAlertValues[1].mean() + "\t" + totallAlertValues[2].mean() + "\t"
 					+ totallAlertValues[3].mean()+ "\t" + totallAlertValues[4].mean());
 			
 			getModel().output("\nAverage Number of sleep attacks in the time points \n");
-			getModel().output("\t1 \t2 \t3 \t4 \t5");
 			getModel().output("\t" + totallSleepAttacksValues[0].mean() + "\t"
 					+ totallSleepAttacksValues[1].mean() + "\t" + totallSleepAttacksValues[2].mean() + "\t"
 					+ totallSleepAttacksValues[3].mean()+ "\t" + totallSleepAttacksValues[4].mean());
@@ -265,8 +262,10 @@ public class PVT_model extends Task {
 				dataFile.createNewFile();
 			PrintStream data = new PrintStream(dataFile);
 
-			for (int h = 0; h < timesOfPVT[timesOfPVT.length - 1]; h++) {
-				data.println(h + "\t" + df3.format(getModel().getFatigue().getBioMathModelValueforHour(h)));
+			data.println("Hour,Biomath");
+			for (int h = 0; h < timesOfPVT.length; h++) {
+				data.println(timesOfPVT[h]- 24 + "," + 
+						df3.format(getModel().getFatigue().getBioMathModelValueforHour(timesOfPVT[h])));
 			}
 
 			data.close();
