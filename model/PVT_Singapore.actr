@@ -1,5 +1,5 @@
 ;;
-;; Driver PVT model : Night A
+;; Driver PVT model : Singapore A
 ;; 
 (set-task "tasks.PVT.PVT_model")
 
@@ -19,7 +19,7 @@
     :ut 2.3
     
     ;;:microlapses nil
-    :fpbmc .04
+    :fpbmc .03
     :fpmc -.005
     
     :utbmc .01  

@@ -38,6 +38,14 @@ public class PVT_model extends Task {
 			12.0 + 24  , 13.0 + 24  , 14.0 +24  , 15.0 + 24  , 16.0 +24   // day1
 
 	};
+	
+	private double[] timesOfTaskSwitch = {
+			//
+			//time points
+			//---1-----      -----2-----      -----3-----     -----4-----       -----5----- 
+			12.0+24,12.5+24, 13.0+24,13.5+24, 14.0+24,14.5+24 ,15.0+24,15.5+24, 16.0+24,16.5+24   // day1
+
+	};
 
 	int sessionNumber = 0; // starts from 0
 	private Session currentSession;
@@ -73,7 +81,8 @@ public class PVT_model extends Task {
 		stimulusVisibility = false;
 
 		getModel().getFatigue().setFatigueHour(timesOfPVT[sessionNumber]);
-		getModel().getFatigue().startFatigueSession();
+		getModel().getFatigue().startFatigueSession();	
+		getModel().getFatigue().setAccumilativeParameter(5*60);
 
 		addUpdate(1.0);
 	}
@@ -129,7 +138,7 @@ public class PVT_model extends Task {
 			getModel().getDeclarative().get(Symbol.get("goal")).set(Symbol.get("state"), Symbol.get("none"));
 			// go to the next session or stop the model
 			if (sessionNumber < timesOfPVT.length) {
-				addEvent(new Event(getModel().getTime() + 60.0, "task", "update") {
+				addEvent(new Event(getModel().getTime() + 55*60.0, "task", "update") { // after 55 min
 					@Override
 					public void action() {
 						sessions.add(currentSession);
@@ -140,7 +149,8 @@ public class PVT_model extends Task {
 						getModel().getFatigue().setFatigueHour(timesOfPVT[sessionNumber]);
 						// System.out.println(sessionNumber +" : "+
 						// getModel().getFatigue().computeBioMathValueForHour());
-						getModel().getFatigue().startFatigueSession();
+						//getModel().getFatigue().startFatigueSession();
+						getModel().getFatigue().startAccumilativeFatigueSession();
 						addUpdate(1.0);
 						getModel().getDeclarative().get(Symbol.get("goal")).set(Symbol.get("state"),
 								Symbol.get("wait"));
