@@ -20,10 +20,10 @@
     
     ;;:microlapses nil
     :fpbmc .03
-    :fpmc -.005
+    :fpmc -.015  ;;  -.005
     
     :utbmc .01  
-    :utmc -.0012
+    :utmc -.003  ;; -.0012
     
     :fp-dec 0.99
     
@@ -95,7 +95,7 @@
 (p press-key 
     =goal>
         isa goal
-        ;state wait
+        - state none
     ?manual>
         state free 
 ==>

@@ -82,7 +82,7 @@ public class PVT_model extends Task {
 
 		getModel().getFatigue().setFatigueHour(timesOfPVT[sessionNumber]);
 		getModel().getFatigue().startFatigueSession();	
-		getModel().getFatigue().setAccumilativeParameter(5*60);
+		getModel().getFatigue().setAccumilativeParameter(10*60);
 
 		addUpdate(1.0);
 	}
@@ -147,8 +147,9 @@ public class PVT_model extends Task {
 						sleepAttackIndex = 0;
 						currentSession.startTime = getModel().getTime();
 						getModel().getFatigue().setFatigueHour(timesOfPVT[sessionNumber]);
-						// System.out.println(sessionNumber +" : "+
-						// getModel().getFatigue().computeBioMathValueForHour());
+						System.out.println(sessionNumber +" : "+ (int)getModel().getTime() 
+								+ "  biomath : " +(int)getModel().getFatigue().computeBioMathValueForHour());
+						
 						//getModel().getFatigue().startFatigueSession();
 						getModel().getFatigue().startAccumilativeFatigueSession();
 						addUpdate(1.0);
