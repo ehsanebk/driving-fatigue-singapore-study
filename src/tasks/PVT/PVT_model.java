@@ -147,11 +147,11 @@ public class PVT_model extends Task {
 						sleepAttackIndex = 0;
 						currentSession.startTime = getModel().getTime();
 						getModel().getFatigue().setFatigueHour(timesOfPVT[sessionNumber]);
-						System.out.println(sessionNumber +" : "+ (int)getModel().getTime() 
-								+ "  biomath : " +(int)getModel().getFatigue().computeBioMathValueForHour());
+//						System.out.println(sessionNumber +" : "+ (int)getModel().getTime() 
+//								+ "  biomath : " +(int)getModel().getFatigue().computeBioMathValueForHour());
 						
-						//getModel().getFatigue().startFatigueSession();
-						getModel().getFatigue().startAccumilativeFatigueSession();
+						getModel().getFatigue().startFatigueSession();
+						//getModel().getFatigue().startAccumilativeFatigueSession();
 						addUpdate(1.0);
 						getModel().getDeclarative().get(Symbol.get("goal")).set(Symbol.get("state"),
 								Symbol.get("wait"));

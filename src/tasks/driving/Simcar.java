@@ -279,19 +279,19 @@ public class Simcar extends Vehicle {
 	double devy = .5;
 
 	double ifc2gl_x(double x ) {
-		return devx + (devscale * -(x - DrivingNightA.centerX));
+		return devx + (devscale * -(x - DrivingProtocolA.centerX)); // Ehsan check the Driving file
 	}
 
 	double ifc2gl_y(double y) {
-		return devy + (devscale * -(y - DrivingNightA.centerY));
+		return devy + (devscale * -(y - DrivingProtocolA.centerY));// Ehsan check the Driving file
 	}
 
 	double gl2ifc_x(double x) {
-		return DrivingNightA.centerX - ((x - devx) / devscale);
+		return DrivingProtocolA.centerX - ((x - devx) / devscale);// Ehsan check the Driving file
 	}
 
 	double gl2ifc_y(double y) {
-		return DrivingNightA.centerY - ((y - devy) / devscale);
+		return DrivingProtocolA.centerY - ((y - devy) / devscale);// Ehsan check the Driving file
 	}
 
 	static TextRenderer textRenderer = null;

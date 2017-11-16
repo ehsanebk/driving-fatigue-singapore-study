@@ -21,7 +21,7 @@ import actr.task.Task;
  * 
  * Modified by Ehsan Khosroshahi for modeling Singapore driving study
  */
-public class DrivingDayB extends Task {
+public class DrivingProtocolB extends Task {
 	// --- Task Code ---//
 
 	private Simulation currentSimulation;
@@ -56,7 +56,7 @@ public class DrivingDayB extends Task {
 	double simulationStartTime = 0;
 	private Vector<Results> results = new Vector<Results>();
 
-	public DrivingDayB() {
+	public DrivingProtocolB() {
 		super();
 		nearLabel = new JLabel(".");
 		carLabel = new JLabel("X");
@@ -297,7 +297,7 @@ public class DrivingDayB extends Task {
 	// }
 
 	public static Image getImage(final String name) {
-		URL url = DrivingDayB.class.getResource("images/" + name);
+		URL url = DrivingProtocolB.class.getResource("images/" + name);
 		return Toolkit.getDefaultToolkit().getImage(url);
 	}
 
@@ -325,7 +325,7 @@ public class DrivingDayB extends Task {
 			}
 
 			for (Task taskCast : tasks) {
-				DrivingDayB task = (DrivingDayB) taskCast;
+				DrivingProtocolB task = (DrivingProtocolB) taskCast;
 				for (int i = 0; i < numberOfSimulations; i++) {
 					Results results = task.results.elementAt(i);
 					totalLatDev[i].add(results.taskLatDev);

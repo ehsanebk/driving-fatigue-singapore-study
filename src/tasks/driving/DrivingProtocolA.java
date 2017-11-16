@@ -21,7 +21,7 @@ import actr.task.Task;
  * 
  * Modified by Ehsan Khosroshahi for modeling Singapore driving study
  */
-public class DrivingDayA extends Task {
+public class DrivingProtocolA extends Task {
 	// --- Task Code ---//
 
 	private Simulation currentSimulation;
@@ -36,8 +36,8 @@ public class DrivingDayA extends Task {
 	private final double steerNaMax = .07;
 	private final double thwFollow = 1.0; // 1.0 orig
 
-	private double simulationDurarion = 60 * 30; // the driving sessions are 30
-													// min (30 * 60sec)
+	private double simulationDurarion = 60 * 50; // the driving sessions are 50
+													// min (50 * 60sec)
 	private double accelBrake = 0, speed = 0;
 
 	private static final int minX = 174, maxX = (238 + 24), minY = 94, maxY = (262 + 32);
@@ -56,7 +56,7 @@ public class DrivingDayA extends Task {
 	double simulationStartTime = 0;
 	private Vector<Results> results = new Vector<Results>();
 
-	public DrivingDayA() {
+	public DrivingProtocolA() {
 		super();
 		nearLabel = new JLabel(".");
 		carLabel = new JLabel("X");
@@ -297,13 +297,13 @@ public class DrivingDayA extends Task {
 	// }
 
 	public static Image getImage(final String name) {
-		URL url = DrivingDayA.class.getResource("images/" + name);
+		URL url = DrivingProtocolA.class.getResource("images/" + name);
 		return Toolkit.getDefaultToolkit().getImage(url);
 	}
 
 	@Override
 	public Result analyze(Task[] tasks, boolean output) {
-		getModel().output("******** Results of Day A **********");
+		getModel().output("******** Results of Protocol A **********");
 		try {
 			int numberOfSimulations = timesOfPVT.length;
 			Values[] totalLatDev = new Values[numberOfSimulations];
@@ -325,7 +325,7 @@ public class DrivingDayA extends Task {
 			}
 
 			for (Task taskCast : tasks) {
-				DrivingDayA task = (DrivingDayA) taskCast;
+				DrivingProtocolA task = (DrivingProtocolA) taskCast;
 				for (int i = 0; i < numberOfSimulations; i++) {
 					Results results = task.results.elementAt(i);
 					totalLatDev[i].add(results.taskLatDev);
@@ -339,121 +339,73 @@ public class DrivingDayA extends Task {
 			}
 
 			DecimalFormat df3 = new DecimalFormat("#.000");
-
+			String s="";
+			
 			getModel().output("\n******* Average LatDev for time points **********");
-			getModel().output("Day\t21:00\t00:00\t03:00\t06:00 ");
-			for (int i = 0; i < 5; i++) {
-				getModel()
-						.output((i + 2) + "\t" + totalLatDev[i * 4].meanDF3() + "\t" + totalLatDev[i * 4 + 1].meanDF3()
-								+ "\t" + totalLatDev[i * 4 + 2].meanDF3() + "\t" + totalLatDev[i * 4 + 3].meanDF3());
+			getModel().output("\t12:00\t13:00\t14:00\t15:00\t16:00 ");
+			for (int i = 0; i < numberOfSimulations; i++) {
+				s += "\t" + totalLatDev[i].meanDF3();
 			}
-			getModel().output("* 34 h break *");
-			for (int i = 5; i < 10; i++) {
-				getModel()
-						.output((i + 4) + "\t" + totalLatDev[i * 4].meanDF3() + "\t" + totalLatDev[i * 4 + 1].meanDF3()
-								+ "\t" + totalLatDev[i * 4 + 2].meanDF3() + "\t" + totalLatDev[i * 4 + 3].meanDF3());
-			}
+			getModel().output(s);
+			s="";
 
 			getModel().output("\n******* Average STEX3 for time points **********");
-			getModel().output("Day\t21:00\t00:00\t03:00\t06:00 ");
-			for (int i = 0; i < 5; i++) {
-				getModel().output((i + 2) + "\t" + totalSTEX3[i * 4].meanDF3() + "\t" + totalSTEX3[i * 4 + 1].meanDF3()
-						+ "\t" + totalSTEX3[i * 4 + 2].meanDF3() + "\t" + totalSTEX3[i * 4 + 3].meanDF3());
+			getModel().output("\t12:00\t13:00\t14:00\t15:00\t16:00 ");
+			for (int i = 0; i < numberOfSimulations; i++) {
+				s+="\t" + totalSTEX3[i].meanDF3();
 			}
-			getModel().output("* 34 h break *");
-			for (int i = 5; i < 10; i++) {
-				getModel().output((i + 4) + "\t" + totalSTEX3[i * 4].meanDF3() + "\t" + totalSTEX3[i * 4 + 1].meanDF3()
-						+ "\t" + totalSTEX3[i * 4 + 2].meanDF3() + "\t" + totalSTEX3[i * 4 + 3].meanDF3());
-			}
-
+			getModel().output(s);
+			s="";
+			
 			getModel().output("\n******* Average SteeringDev for time points **********");
-			getModel().output("Day\t21:00\t00:00\t03:00\t06:00 ");
-			for (int i = 0; i < 5; i++) {
-				getModel().output((i + 2) + "\t" + totalSteeringDev[i * 4].meanDF3() + "\t"
-						+ totalSteeringDev[i * 4 + 1].meanDF3() + "\t" + totalSteeringDev[i * 4 + 2].meanDF3() + "\t"
-						+ totalSteeringDev[i * 4 + 3].meanDF3());
+			getModel().output("\t12:00\t13:00\t14:00\t15:00\t16:00 ");
+			for (int i = 0; i < numberOfSimulations; i++) {
+				s +="\t" + totalSteeringDev[i].meanDF3();
 			}
-			getModel().output("* 34 h break *");
-			for (int i = 5; i < 10; i++) {
-				getModel().output((i + 4) + "\t" + totalSteeringDev[i * 4].meanDF3() + "\t"
-						+ totalSteeringDev[i * 4 + 1].meanDF3() + "\t" + totalSteeringDev[i * 4 + 2].meanDF3() + "\t"
-						+ totalSteeringDev[i * 4 + 3].meanDF3());
-			}
-
+			getModel().output(s);
+			s="";
+			
 			getModel().output("\n******* Average LatVel for time points **********");
-			getModel().output("Day\t21:00\t00:00\t03:00\t06:00 ");
-			for (int i = 0; i < 5; i++) {
-				getModel()
-						.output((i + 2) + "\t" + totalLatVel[i * 4].meanDF3() + "\t" + totalLatVel[i * 4 + 1].meanDF3()
-								+ "\t" + totalLatVel[i * 4 + 2].meanDF3() + "\t" + totalLatVel[i * 4 + 3].meanDF3());
+			getModel().output("\t12:00\t13:00\t14:00\t15:00\t16:00 ");
+			for (int i = 0; i < numberOfSimulations; i++) {
+				s+="\t" + totalLatVel[i].meanDF3();
 			}
-			getModel().output("* 34 h break *");
-			for (int i = 5; i < 10; i++) {
-				getModel()
-						.output((i + 4) + "\t" + totalLatVel[i * 4].meanDF3() + "\t" + totalLatVel[i * 4 + 1].meanDF3()
-								+ "\t" + totalLatVel[i * 4 + 2].meanDF3() + "\t" + totalLatVel[i * 4 + 3].meanDF3());
-			}
-
+			getModel().output(s);
+			s="";
+			
 			getModel().output("\n******* Average brakeRT for time points **********");
-			getModel().output("Day\t21:00\t00:00\t03:00\t06:00 ");
-			for (int i = 0; i < 5; i++) {
-				getModel().output(
-						(i + 2) + "\t" + totalbrakeRT[i * 4].meanDF3() + "\t" + totalbrakeRT[i * 4 + 1].meanDF3() + "\t"
-								+ totalbrakeRT[i * 4 + 2].meanDF3() + "\t" + totalbrakeRT[i * 4 + 3].meanDF3());
+			getModel().output("\t12:00\t13:00\t14:00\t15:00\t16:00 ");
+			for (int i = 0; i < numberOfSimulations; i++) {
+				s += "\t" + totalbrakeRT[i].meanDF3();	
 			}
-			getModel().output("* 34 h break *");
-			for (int i = 5; i < 10; i++) {
-				getModel().output(
-						(i + 4) + "\t" + totalbrakeRT[i * 4].meanDF3() + "\t" + totalbrakeRT[i * 4 + 1].meanDF3() + "\t"
-								+ totalbrakeRT[i * 4 + 2].meanDF3() + "\t" + totalbrakeRT[i * 4 + 3].meanDF3());
-			}
-
+			getModel().output(s);
+			s="";
+			
 			getModel().output("\n******* Average headingError for time points **********");
-			getModel().output("Day\t21:00\t00:00\t03:00\t06:00 ");
-			for (int i = 0; i < 5; i++) {
-				getModel().output((i + 2) + "\t" + totalheadingError[i * 4].meanDF3() + "\t"
-						+ totalheadingError[i * 4 + 1].meanDF3() + "\t" + totalheadingError[i * 4 + 2].meanDF3() + "\t"
-						+ totalheadingError[i * 4 + 3].meanDF3());
+			getModel().output("\t12:00\t13:00\t14:00\t15:00\t16:00 ");
+			for (int i = 0; i < numberOfSimulations; i++) {
+				s += "\t" + totalheadingError[i].meanDF3();
 			}
-			getModel().output("* 34 h break *");
-			for (int i = 5; i < 10; i++) {
-				getModel().output((i + 4) + "\t" + totalheadingError[i * 4].meanDF3() + "\t"
-						+ totalheadingError[i * 4 + 1].meanDF3() + "\t" + totalheadingError[i * 4 + 2].meanDF3() + "\t"
-						+ totalheadingError[i * 4 + 3].meanDF3());
-			}
-
+			getModel().output(s);
+			s="";
+			
 			getModel().output("\n******* Average SpeedDev for time points **********");
-			getModel().output("Day\t21:00\t00:00\t03:00\t06:00 ");
-			for (int i = 0; i < 5; i++) {
-				getModel().output((i + 2) + "\t" + totalSpeedDev[i * 4].meanDF3() + "\t"
-						+ totalSpeedDev[i * 4 + 1].meanDF3() + "\t" + totalSpeedDev[i * 4 + 2].meanDF3() + "\t"
-						+ totalSpeedDev[i * 4 + 3].meanDF3());
+			getModel().output("\t12:00\t13:00\t14:00\t15:00\t16:00 ");
+			for (int i = 0; i < numberOfSimulations; i++) {
+				s +="\t" + totalSpeedDev[i].meanDF3();
 			}
-			getModel().output("* 34 h break *");
-			for (int i = 5; i < 10; i++) {
-				getModel().output((i + 4) + "\t" + totalSpeedDev[i * 4].meanDF3() + "\t"
-						+ totalSpeedDev[i * 4 + 1].meanDF3() + "\t" + totalSpeedDev[i * 4 + 2].meanDF3() + "\t"
-						+ totalSpeedDev[i * 4 + 3].meanDF3());
-			}
-
+			getModel().output(s);
+			s="";
+			
 			getModel().output("\n******* Fatigue BioMath values for time points **********");
-			getModel().output("Day\t21:00\t00:00\t03:00\t06:00 ");
-			for (int i = 0; i < 5; i++) {
-				getModel().output((i + 2) + "\t"
-						+ df3.format(getModel().getFatigue().getBioMathModelValueforHour(timesOfPVT[i * 4])) + "\t"
-						+ df3.format(getModel().getFatigue().getBioMathModelValueforHour(timesOfPVT[i * 4 + 1])) + "\t"
-						+ df3.format(getModel().getFatigue().getBioMathModelValueforHour(timesOfPVT[i * 4 + 2])) + "\t"
-						+ df3.format(getModel().getFatigue().getBioMathModelValueforHour(timesOfPVT[i * 4 + 3])));
+			getModel().output("\t12:00\t13:00\t14:00\t15:00\t16:00 ");
+			for (int i = 0; i < numberOfSimulations; i++) {
+				s+= "\t"+ df3.format(getModel().getFatigue()
+								.getBioMathModelValueforHour(timesOfPVT[i]));
 			}
-			getModel().output("* 34 h break *");
-			for (int i = 5; i < 10; i++) {
-				getModel().output((i + 2) + "\t"
-						+ df3.format(getModel().getFatigue().getBioMathModelValueforHour(timesOfPVT[i * 4])) + "\t"
-						+ df3.format(getModel().getFatigue().getBioMathModelValueforHour(timesOfPVT[i * 4 + 1])) + "\t"
-						+ df3.format(getModel().getFatigue().getBioMathModelValueforHour(timesOfPVT[i * 4 + 2])) + "\t"
-						+ df3.format(getModel().getFatigue().getBioMathModelValueforHour(timesOfPVT[i * 4 + 3])));
-			}
-
+			getModel().output(s);
+			s="";
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
