@@ -7,9 +7,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Vector;
-
 import javax.swing.JLabel;
-
 import actr.task.Result;
 import actr.task.Task;
 
@@ -114,7 +112,17 @@ public class DrivingProtocolA extends Task {
 				currentSimulation.getEnvironment().setTime(time - simulationStartTime);
 				currentSimulation.update();
 				updateVisuals();
-
+				
+				// in case the car position is out of lane
+				if (currentSimulation.samples.lastElement().getSimcarLanePosition()<4
+						|| currentSimulation.samples.lastElement().getSimcarLanePosition()>5)
+				{
+					System.out.println("car out of lane !!!");
+					results.add(currentSimulation.getResults());
+					getModel().stop();
+				}
+				
+				
 				if (simulator != null)
 					simulator.repaint();
 
@@ -326,7 +334,7 @@ public class DrivingProtocolA extends Task {
 
 			for (Task taskCast : tasks) {
 				DrivingProtocolA task = (DrivingProtocolA) taskCast;
-				for (int i = 0; i < numberOfSimulations; i++) {
+				for (int i = 0; i < task.results.size(); i++) {
 					Results results = task.results.elementAt(i);
 					totalLatDev[i].add(results.taskLatDev);
 					totalLatVel[i].add(results.taskLatVel);
