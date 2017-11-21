@@ -114,8 +114,8 @@ public class DrivingProtocolA extends Task {
 				updateVisuals();
 				
 				// in case the car position is out of lane
-				if (currentSimulation.samples.lastElement().getSimcarLanePosition()<4
-						|| currentSimulation.samples.lastElement().getSimcarLanePosition()>5)
+				if (currentSimulation.samples.lastElement().getSimcarLanePosition()<3.5
+						|| currentSimulation.samples.lastElement().getSimcarLanePosition()>5.5)
 				{
 					System.out.println("car out of lane !!!");
 					results.add(currentSimulation.getResults());
