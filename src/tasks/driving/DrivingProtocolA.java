@@ -34,7 +34,7 @@ public class DrivingProtocolA extends Task {
 	private final double steerNaMax = .07;
 	private final double thwFollow = 1.0; // 1.0 orig
 
-	private double simulationDurarion = 60 * 50; // the driving sessions are 50
+	private double simulationDurarion = 60 * 30; // the driving sessions are 50
 													// min (50 * 60sec)
 	private double accelBrake = 0, speed = 0;
 
@@ -129,8 +129,8 @@ public class DrivingProtocolA extends Task {
 			} else {
 
 				results.add(currentSimulation.getResults());
+				System.out.println(simulationNumber + " " + ( time - simulationStartTime));
 				simulationNumber++;
-				System.out.println(simulationNumber);
 				// go to the next simulation or stop the model
 				if (simulationNumber < timesOfPVT.length) {
 					currentSimulation = new Simulation();

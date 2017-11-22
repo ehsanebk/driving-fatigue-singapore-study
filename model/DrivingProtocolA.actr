@@ -165,6 +165,7 @@
         isa car
     !eval! (is-car-stable =na =vna =vfa)
 ==>
+        ;;For fatigue percentage reset if the car is stable we don't recet
     !eval! (fatigue-reset-percentage)
     =goal>
         na nil

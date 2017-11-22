@@ -21,7 +21,7 @@ public class Scenario {
 		simcarConstantSpeed = false;
 		simcarMPH = 0;
 		leadCarConstantSpeed = true;
-		leadCarMPH = 30;
+		leadCarMPH = 30; // 30 KmPH = 18.64 MPH
 		leadCarBrakes = false;
 		drivingMinutes = 0;
 		timeBetweenTrials = 0;
