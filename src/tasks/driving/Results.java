@@ -9,7 +9,8 @@ import java.text.DecimalFormat;
  */
 public class Results {
 	Driver driver;
-
+	
+	public boolean complete;
 	public double taskTime;
 	public double taskLatDev;
 	public double taskLatVel;

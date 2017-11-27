@@ -19,12 +19,15 @@ public class Simulation {
 	private Environment env = null;
 	Vector<Sample> samples = new Vector<Sample>();
 	private Results results = null;
+	
+	boolean complete;
 
 	Simulation() {
 		scenario = new Scenario();
 		driver = new Driver("Driver", 25, 1.0f, 1.0f);
 		env = new Environment(driver, scenario);
 		samples.add(new Sample(env));
+		complete = true;
 	}
 
 	synchronized void update() {
@@ -200,7 +203,8 @@ public class Simulation {
 		r.laneViolations = laneViolations;
 		r.STEX3 = numSTEX3 / numTaskSamples * 100;
 		r.taskSteeringDev = Math.sqrt(sumSteeringDev / numTaskSamples);
-
+		r.complete = complete;
+		
 		return r;
 	}
 }
