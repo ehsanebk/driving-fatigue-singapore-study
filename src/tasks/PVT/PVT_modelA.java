@@ -18,7 +18,7 @@ import actr.task.*;
  * @author Ehsan Khosroshahi
  */
 
-public class PVT_model extends Task {
+public class PVT_modelA extends Task {
 	private static double SESSION_TOTAL_TIME = 300.0;
 
 	private TaskLabel label;
@@ -66,7 +66,7 @@ public class PVT_model extends Task {
 		double responseTotalTime = 0;
 	}
 
-	public PVT_model() {
+	public PVT_modelA() {
 		super();
 		label = new TaskLabel("", 200, 150, 40, 20);
 		add(label);
@@ -138,7 +138,7 @@ public class PVT_model extends Task {
 			getModel().getDeclarative().get(Symbol.get("goal")).set(Symbol.get("state"), Symbol.get("none"));
 			// go to the next session or stop the model
 			if (sessionNumber < timesOfPVT.length) {
-				addEvent(new Event(getModel().getTime() + 55*60.0, "task", "update") { // after 55 min
+				addEvent(new Event(getModel().getTime() + 60.0, "task", "update") { // after 1 min
 					@Override
 					public void action() {
 						sessions.add(currentSession);
@@ -209,7 +209,7 @@ public class PVT_model extends Task {
 
 	@Override
 	public int analysisIterations() {
-		return 20;
+		return 50;
 	}
 
 	@Override
@@ -233,7 +233,7 @@ public class PVT_model extends Task {
 			}
 
 			for (Task taskCast : tasks) {
-				PVT_model task = (PVT_model) taskCast;
+				PVT_modelA task = (PVT_modelA) taskCast;
 				for (int i = 0; i < numberOfSessions; i++) {
 					totallLapsesValues[i].add(task.sessions.get(i).lapses);
 					totallFalseResponsesValues[i].add(task.sessions.get(i).falseStarts);
