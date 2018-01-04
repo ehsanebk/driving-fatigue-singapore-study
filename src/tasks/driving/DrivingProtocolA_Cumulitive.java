@@ -22,7 +22,7 @@ import actr.task.Task;
  * 
  * Modified by Ehsan Khosroshahi for modeling Singapore driving study
  */
-public class DrivingProtocolA_Accumulitive extends Task {
+public class DrivingProtocolA_Cumulitive extends Task {
 	// --- Task Code ---//
 
 	private Simulation currentSimulation;
@@ -58,7 +58,7 @@ public class DrivingProtocolA_Accumulitive extends Task {
 	private Vector<Results> results = new Vector<Results>();
 	boolean completed;
 
-	public DrivingProtocolA_Accumulitive() {
+	public DrivingProtocolA_Cumulitive() {
 		super();
 		nearLabel = new JLabel(".");
 		carLabel = new JLabel("X");
@@ -334,7 +334,7 @@ public class DrivingProtocolA_Accumulitive extends Task {
 	// }
 
 	public static Image getImage(final String name) {
-		URL url = DrivingProtocolA_Accumulitive.class.getResource("images/" + name);
+		URL url = DrivingProtocolA_Cumulitive.class.getResource("images/" + name);
 		return Toolkit.getDefaultToolkit().getImage(url);
 	}
 
@@ -362,7 +362,7 @@ public class DrivingProtocolA_Accumulitive extends Task {
 			}
 
 			for (Task taskCast : tasks) {
-				DrivingProtocolA_Accumulitive task = (DrivingProtocolA_Accumulitive) taskCast;
+				DrivingProtocolA_Cumulitive task = (DrivingProtocolA_Cumulitive) taskCast;
 				for (int i = 0; i < task.results.size(); i++) {
 					Results results = task.results.elementAt(i);
 					totalLatDev[i].add(results.taskLatDev);
@@ -389,7 +389,7 @@ public class DrivingProtocolA_Accumulitive extends Task {
 			getModel().output("\n********* LatDev for time points **********");
 			getModel().output("\t13:00\t14:00\t15:00\t16:00 ");
 			for (Task taskCast : tasks) {
-				DrivingProtocolA_Accumulitive task = (DrivingProtocolA_Accumulitive) taskCast;
+				DrivingProtocolA_Cumulitive task = (DrivingProtocolA_Cumulitive) taskCast;
 				if (!task.completed)
 					s+="–";
 				for (int i = 0; i < task.results.size(); i++) {
@@ -413,7 +413,7 @@ public class DrivingProtocolA_Accumulitive extends Task {
 			getModel().output("\n******* STEX3 for time points **********");
 			getModel().output("\t13:00\t14:00\t15:00\t16:00 ");
 			for (Task taskCast : tasks) {
-				DrivingProtocolA_Accumulitive task = (DrivingProtocolA_Accumulitive) taskCast;
+				DrivingProtocolA_Cumulitive task = (DrivingProtocolA_Cumulitive) taskCast;
 				if (!task.completed)
 					s+="–";
 				for (int i = 0; i < task.results.size(); i++) {
@@ -436,7 +436,7 @@ public class DrivingProtocolA_Accumulitive extends Task {
 			getModel().output("\n******* SpeedDev for time points **********");
 			getModel().output("\t13:00\t14:00\t15:00\t16:00 ");
 			for (Task taskCast : tasks) {
-				DrivingProtocolA_Accumulitive task = (DrivingProtocolA_Accumulitive) taskCast;
+				DrivingProtocolA_Cumulitive task = (DrivingProtocolA_Cumulitive) taskCast;
 				if (!task.completed)
 					s+="–";
 				for (int i = 0; i < task.results.size(); i++) {

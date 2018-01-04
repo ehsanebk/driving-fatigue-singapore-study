@@ -2,7 +2,7 @@
 ;; Driver PVT model : Singapore A
 ;; 
 (set-task "tasks.PVT.PVT_modelA")
-;;(set-task "tasks.PVT.PVT_modelA_Accumulative")
+;;(set-task "tasks.PVT.PVT_modelA_Cumulative")
 
 (set-schedule 
     (8.0 22.0)(32.0 46.0)
