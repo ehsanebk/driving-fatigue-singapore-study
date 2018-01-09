@@ -1,10 +1,6 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
-### What is this repository for? ###
-
-* summary
+### Summary ###
 
 This study involves data collected from a real vehicle during
 real-world driving, in particular from an experiment conducted by Lin and
@@ -15,24 +11,30 @@ includes data from two groups to compare time-on-task effects between the
 continuous and non-continuous conditions.
 
 * Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
-### How do I get set up? ###
+### Instructions ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+The following steps are recommended for compiling and running the model:
 
-### Contribution guidelines ###
+* use Eclipse as the Java development environment
+* start a new Eclipse project
+* add, as an external library, the ACT-R.jar and other jar files in lib directory
+* add the model source code
+* change the starter file based on the model that you want to run (night A, night B, and Day A)
+* compile and run the system
+* when the application launches, open the proper ACT-R model and run the model
 
-* Writing tests
-* Code review
-* Other guidelines
 
-### Who do I talk to? ###
+### Authors ###
 
-* Repo owner or admin
-* Other community or team contact
+* Ehsan B Khosroshahi
+* Dario D Salvucci
+
+### References ###
+
+* Anderson, J. R. (2007). How Can the Human Mind Occur in the Physical Universe? Oxford University Press.
+* Forsman, P. M., Vila, B. J., Short, R. A., Mott, C. G., & Van Dongen, H. P. (2013). Efficient driver drowsiness detection at moderate levels of drowsiness. Accident Analysis & Prevention, 50, 341-350.
+* Gunzelmann, G., Moore, L. R., Salvucci, D. D., & Gluck, K. A. (2011). Sleep loss and driver performance: Quantitative predictions with zero free parameters. Cognitive Systems Research, 12, 154-163.
+* Salvucci, D. D. (2006). Modeling driver behavior in a cognitive architecture. Human Factors, 48, 362-380.
+* Walsh, M. M., Gunzelmann, G., & Van Dongen, H. P. (2014). Comparing accounts of psychomotor vigilance impairment due to sleep loss. In Proceedings of the 36th Annual Conference of the Cognitive Science Society (pp. 877-882).
+
