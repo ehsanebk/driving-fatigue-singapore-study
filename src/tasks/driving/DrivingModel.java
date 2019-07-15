@@ -5,12 +5,10 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.JLabel;
-
-import actr.model.Event;
-import actr.model.Symbol;
 import actr.task.Result;
 import actr.task.Task;
 
@@ -18,27 +16,32 @@ import actr.task.Task;
  * The main Driving task class that sets up the simulation and starts periodic
  * updates.
  * 
- * @author Dario Salvucci
+ * @author Dario Salvucci, Ehsan Khosroshahi
  * 
- * Modified by Ehsan Khosroshahi for modeling Singapore driving study
+ * LPSD  : Standard deviation of lane position from the center of the lane in ft 
+ * SWASD : Standard deviation of steering wheel angle 
+ * SSD   : Standard deviation of speed in miles per hour (MPH)
+ * 
  */
-public class DrivingProtocolA_Cumulitive extends Task {
+public class DrivingModel extends Task {
 	// --- Task Code ---//
-
+	
 	private Simulation currentSimulation;
 	private JLabel nearLabel, carLabel, keypad;
 
-	private final double scale = .40; // .85;
+	private final double scale = .40;
 	private final double steerFactor_dfa = (16 * scale);
 	private final double steerFactor_dna = (4 * scale);
-	private final double steerFactor_na = (3 * scale);
-	private final double accelFactor_thw = (2 * .40); // 1 orig, 3?
-	private final double accelFactor_dthw = (4 * .40); // 3 orig, 5?
-	private final double steerNaMax = .07;
+	private final double steerFactor_na = (3 * scale); // 3 orig
+	private final double accelFactor_thw = (2 * .40); // 1 .40 orig, 3?
+	private final double accelFactor_dthw = (4 * .40); // 3 .40 orig, 5?
+	private final double steerNaMax = .07; //.07 orig
 	private final double thwFollow = 1.0; // 1.0 orig
 
-	private double simulationDurarion = 45 * 60 ; // the driving sessions are 50
-													// min (50 * 60sec)
+	private double simulationDurarion ; // the driving sessions are 30 min (30 * 60sec)
+	private ArrayList<Double> timesOfSimulation;
+	private final double simulationDistance = 0;  // 
+
 	private double accelBrake = 0, speed = 0;
 
 	private static final int minX = 174, maxX = (238 + 24), minY = 94, maxY = (262 + 32);
@@ -46,33 +49,37 @@ public class DrivingProtocolA_Cumulitive extends Task {
 
 	private static Simulator simulator = null;
 
-	private double[] timesOfSessions = {
-			//
-			//time points
-			//-----2----- -----3-----  -----4----- -----5----- 
-			  13.0 + 24  , 14.0 +24  , 15.0 + 24  , 16.0 +24   // day1		
-	};
-
 	int simulationNumber = 0;
 	double simulationStartTime = 0;
 	private Vector<Results> results = new Vector<Results>();
-	boolean completed;
+	private boolean completed;
+	private Vector<int []> microLapses = new Vector<int []>(); // [ number of micro lapses , number of total productions ] 
+	private int currentSimulation_NumberOf_MicroLapses=0;
+	private int currentSimulation_NumberOf_Productions=0;
+	
 
-	public DrivingProtocolA_Cumulitive() {
+	
+	int c=0;
+	
+	public DrivingModel(){
 		super();
 		nearLabel = new JLabel(".");
 		carLabel = new JLabel("X");
-		keypad = new JLabel("*");
+		keypad = new JLabel("*");	
 	}
 
 	@Override
 	public void start() {
+
+		
 		completed = true;
 		currentSimulation = new Simulation();
 
-		getModel().getFatigue().setFatigueHour(timesOfSessions[simulationNumber]);
+		simulationDurarion = getModel().getFatigue().getTaskDuration(); // the driving sessions are 30 min (30 * 60sec)
+		timesOfSimulation = getModel().getFatigue().getTaskSchdule();
+		
+		getModel().getFatigue().setFatigueStartTime(timesOfSimulation.get(simulationNumber));
 		getModel().getFatigue().startFatigueSession();
-		getModel().getFatigue().setCumulativeParameter(10*60);
 
 		if (getModel().getRealTime()) {
 			if (simulator == null)
@@ -108,7 +115,7 @@ public class DrivingProtocolA_Cumulitive extends Task {
 		getModel().getVision().addVisual("car", "car", "car", carLabel.getX(), carLabel.getY(), 1, 1, 100);
 		getModel().getVision().addVisual("keypad", "keypad", "keypad", keypad.getX(), keypad.getY(), 1, 1);
 
-		addUpdate(Environment.SAMPLE_TIME);
+		addPeriodicUpdate(Environment.SAMPLE_TIME);
 	}
 
 	@Override
@@ -118,75 +125,63 @@ public class DrivingProtocolA_Cumulitive extends Task {
 				currentSimulation.getEnvironment().setTime(time - simulationStartTime);
 				currentSimulation.update();
 				updateVisuals();
+				c++;
+				if (getModel().getProcedural().isMicroLapse())
+					currentSimulation_NumberOf_MicroLapses++;
+				currentSimulation_NumberOf_Productions++;
 				
 				// in case the car position is out of lane
-				if (currentSimulation.samples.lastElement().getSimcarLanePosition()<3.5
-						|| currentSimulation.samples.lastElement().getSimcarLanePosition()>5.5)
+				if (currentSimulation.samples.lastElement().getSimcarLanePosition()<3
+						|| currentSimulation.samples.lastElement().getSimcarLanePosition()>6)
 				{
 					System.out.println("car out of lane !!!");
 					completed = false;
 					results.add(currentSimulation.getResults());
+					int [] l = {currentSimulation_NumberOf_MicroLapses,currentSimulation_NumberOf_Productions} ;
+					currentSimulation_NumberOf_MicroLapses = 0;
+					currentSimulation_NumberOf_Productions = 0;
+					microLapses.add(l);
 					getModel().stop();
 				}
-				
-				
+
 				if (simulator != null)
 					simulator.repaint();
-				
-				addUpdate(Environment.SAMPLE_TIME);
 
 			} else {
-
+				System.out.println(simulationNumber);
 				results.add(currentSimulation.getResults());
-				System.out.println(simulationNumber + " " + ( time - simulationStartTime));
+				int [] l = {currentSimulation_NumberOf_MicroLapses,currentSimulation_NumberOf_Productions} ;
+				currentSimulation_NumberOf_MicroLapses = 0;
+				currentSimulation_NumberOf_Productions = 0;
+				microLapses.add(l);
 				simulationNumber++;
 				// go to the next simulation or stop the model
-				if (simulationNumber < timesOfSessions.length) {
+				if (simulationNumber < timesOfSimulation.size()) {
+					currentSimulation = new Simulation();
+					simulationStartTime = time;
+					getModel().getFatigue().setFatigueStartTime(timesOfSimulation.get(simulationNumber));
+					getModel().getFatigue().startFatigueSession();
+
 					removeAll();
-					
-					// after 15 min restarting the new session
-					addEvent(new Event(getModel().getTime() + 15*60.0, "task", "update") { 
-						@Override
-						public void action() {
-							currentSimulation = new Simulation();
-							simulationStartTime = time;
-							getModel().getFatigue().setFatigueHour(timesOfSessions[simulationNumber]);
-							getModel().getFatigue().startAccumilativeFatigueSession();
-							
-							add(nearLabel);
-							nearLabel.setSize(20, 20);
-							nearLabel.setLocation(250, 250);
-							add(carLabel);
-							carLabel.setSize(20, 20);
-							carLabel.setLocation(250, 250);
-							add(keypad);
-							keypad.setSize(20, 20);
-							int keypadX = 250 + (int) (actr.model.Utilities.angle2pixels(10.0));
-							keypad.setLocation(keypadX, 250);
 
-							accelBrake = 0;
-							speed = 0;
+					add(nearLabel);
+					nearLabel.setSize(20, 20);
+					nearLabel.setLocation(250, 250);
+					add(carLabel);
+					carLabel.setSize(20, 20);
+					carLabel.setLocation(250, 250);
+					add(keypad);
+					keypad.setSize(20, 20);
+					int keypadX = 250 + (int) (actr.model.Utilities.angle2pixels(10.0));
+					keypad.setLocation(keypadX, 250);
 
-							getModel().getVision().addVisual("near", "near", "near", nearLabel.getX(), nearLabel.getY(), 1, 1,
-									10);
-							getModel().getVision().addVisual("car", "car", "car", carLabel.getX(), carLabel.getY(), 1, 1, 100);
-							getModel().getVision().addVisual("keypad", "keypad", "keypad", keypad.getX(), keypad.getY(), 1, 1);
+					accelBrake = 0;
+					speed = 0;
 
-
-
-							getModel().getFatigue().setFatigueHour(timesOfSessions[simulationNumber]);
-							//							System.out.println(sessionNumber +" : "+ (int)getModel().getTime() 
-							//									+ "  biomath : " +(int)getModel().getFatigue().computeBioMathValueForHour());
-
-							//getModel().getFatigue().startFatigueSession();
-							getModel().getFatigue().startAccumilativeFatigueSession();
-							addUpdate(1.0);
-							getModel().getDeclarative().get(Symbol.get("goal")).set(Symbol.get("state"),
-									Symbol.get("wait"));
-							addUpdate(Environment.SAMPLE_TIME);
-						}
-					});
-					 
+					getModel().getVision().addVisual("near", "near", "near", nearLabel.getX(), nearLabel.getY(), 1, 1,
+							10);
+					getModel().getVision().addVisual("car", "car", "car", carLabel.getX(), carLabel.getY(), 1, 1, 100);
+					getModel().getVision().addVisual("keypad", "keypad", "keypad", keypad.getX(), keypad.getY(), 1, 1);
 
 				} else {
 					getModel().stop();
@@ -195,12 +190,6 @@ public class DrivingProtocolA_Cumulitive extends Task {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	// calling percentage reset after any new task presentation (audio or
-	// visual)
-	void fatigueResetPercentage() {
-		getModel().getFatigue().fatigueResetPercentages();
 	}
 
 	void updateVisuals() {
@@ -225,7 +214,7 @@ public class DrivingProtocolA_Cumulitive extends Task {
 	}
 
 	boolean isCarStable(double na, double nva, double fva) {
-		double f = 2.5;
+		double f = 0.5; //2.5;
 		return (Math.abs(na) < .025 * f) && (Math.abs(nva) < .0125 * f) && (Math.abs(fva) < .0125 * f);
 	}
 
@@ -259,6 +248,13 @@ public class DrivingProtocolA_Cumulitive extends Task {
 		} else if (cmd.equals("fatigue-reset-percentage")) {
 			fatigueResetPercentage();
 		}
+	}
+	
+	// calling percentage reset after any new task presentation (audio or visual)
+	void fatigueResetPercentage() {
+		getModel().getFatigue().fatigueResetPercentages();
+		if (getModel().isVerbose())
+			getModel().output("!!!! Fatigue Percentage Reset !!!!");
 	}
 
 	@Override
@@ -333,16 +329,28 @@ public class DrivingProtocolA_Cumulitive extends Task {
 	// simulator.stop();
 	// }
 
+	// number of participants in the experiment is 13 for night condition
+	@Override
+	public int analysisIterations() {
+ 		return 13;
+	}
+
 	public static Image getImage(final String name) {
-		URL url = DrivingProtocolA_Cumulitive.class.getResource("images/" + name);
+		URL url = DrivingModel.class.getResource("images/" + name);
 		return Toolkit.getDefaultToolkit().getImage(url);
 	}
 
+	/**
+	 * 
+	 * LPSD  : Standard deviation of lane position from the center of the lane in ft 
+	 * SWASD : Standard deviation of steering wheel angle 
+	 * SSD   : Standard deviation of speed in miles per hour (MPH)
+	 */
 	@Override
 	public Result analyze(Task[] tasks, boolean output) {
 		getModel().output("******** Results of Protocol A **********");
 		try {
-			int numberOfSimulations = timesOfSessions.length;
+			int numberOfSimulations = timesOfSimulation.size();
 			Values[] totalLatDev = new Values[numberOfSimulations];
 			Values[] totalLatVel = new Values[numberOfSimulations];
 			Values[] totalbrakeRT = new Values[numberOfSimulations];
@@ -362,7 +370,7 @@ public class DrivingProtocolA_Cumulitive extends Task {
 			}
 
 			for (Task taskCast : tasks) {
-				DrivingProtocolA_Cumulitive task = (DrivingProtocolA_Cumulitive) taskCast;
+				DrivingModel task = (DrivingModel) taskCast;
 				for (int i = 0; i < task.results.size(); i++) {
 					Results results = task.results.elementAt(i);
 					totalLatDev[i].add(results.taskLatDev);
@@ -389,7 +397,7 @@ public class DrivingProtocolA_Cumulitive extends Task {
 			getModel().output("\n********* LatDev for time points **********");
 			getModel().output("\t13:00\t14:00\t15:00\t16:00 ");
 			for (Task taskCast : tasks) {
-				DrivingProtocolA_Cumulitive task = (DrivingProtocolA_Cumulitive) taskCast;
+				DrivingModel task = (DrivingModel) taskCast;
 				if (!task.completed)
 					s+="–";
 				for (int i = 0; i < task.results.size(); i++) {
@@ -413,7 +421,7 @@ public class DrivingProtocolA_Cumulitive extends Task {
 			getModel().output("\n******* STEX3 for time points **********");
 			getModel().output("\t13:00\t14:00\t15:00\t16:00 ");
 			for (Task taskCast : tasks) {
-				DrivingProtocolA_Cumulitive task = (DrivingProtocolA_Cumulitive) taskCast;
+				DrivingModel task = (DrivingModel) taskCast;
 				if (!task.completed)
 					s+="–";
 				for (int i = 0; i < task.results.size(); i++) {
@@ -436,7 +444,7 @@ public class DrivingProtocolA_Cumulitive extends Task {
 			getModel().output("\n******* SpeedDev for time points **********");
 			getModel().output("\t13:00\t14:00\t15:00\t16:00 ");
 			for (Task taskCast : tasks) {
-				DrivingProtocolA_Cumulitive task = (DrivingProtocolA_Cumulitive) taskCast;
+				DrivingModel task = (DrivingModel) taskCast;
 				if (!task.completed)
 					s+="–";
 				for (int i = 0; i < task.results.size(); i++) {
@@ -484,7 +492,7 @@ public class DrivingProtocolA_Cumulitive extends Task {
 			getModel().output("\t13:00\t14:00\t15:00\t16:00 ");
 			for (int i = 0; i < numberOfSimulations; i++) {
 				s+= "\t"+ df3.format(getModel().getFatigue()
-								.getBioMathModelValueforHour(timesOfSessions[i]));
+								.getBioMathModelValue(timesOfSimulation.get(i)));
 			}
 			getModel().output(s);
 			s="";

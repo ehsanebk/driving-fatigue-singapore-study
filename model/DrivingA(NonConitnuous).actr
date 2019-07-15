@@ -1,17 +1,25 @@
-(set-task "tasks.driving.DrivingProtocolA")
-;;(set-task "tasks.driving.DrivingProtocolA_Accumulitive")
-
-(set-schedule 
+(set-task "tasks.driving.DrivingModel")
+(set-sleep-schedule 
     (8.0 22.0)(32.0 46.0)
 )
 
+(set-task-schedule 
+    37
+    38
+    39
+    40
+)
+
+;;(set-output-dir "./resultDriving/DayA")
+
+(set-task-duration 2700.0) ;; the driving sessions are 45 min (45 * 60sec)
 
 (sgp 
     :cst nil
     :v nil
     :fatigue t 
     :fatigue-partial-matching nil
-    :iu 1.45 ;; 1.56
+    :iu 1.56 ; 1.56
     :ut 1.15
     ;; (IU-(fpbmc*BioMath)) - (UT-(utbmc*BioMath)) = X
     ;; BioMath(utbmc-fpbmc) + IU - UT0 = X

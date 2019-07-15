@@ -3,20 +3,30 @@
     (8.0 22.0)(32.0 46.0)(56.0 70.0)(80.0 94.0)(104.0 118.0)(128.0 142.0)(152.0 166.0)
     (176.0 190.0)(200.0 214.0)(224.0 238.0)(248.0 262.0)(272.0 286.0)(296.0 310.0)(320.0 334.0)
 )
-(sgp
+
+
+(sgp 
+    :cst nil
     :v nil
-    :fatigue t   
-    :iu 2.8
-    :ut 2.3
+    :fatigue t 
+    :fatigue-partial-matching nil
+    :iu 1.56
+    :ut 1.15
+    ;; (IU-(fpbmc*BioMath)) - (UT-(utbmc*BioMath)) = X
+    ;; BioMath(utbmc-fpbmc) + IU - UT0 = X
+    ;; best value for  BioMath=4.26 (10am) : X=
+    ;; IU = BM * ( fpbmc - utbmc ) + X + UT0
     
     ;;:microlapses nil
-    :fpbmc .02
-    :fpmc -.005
+    :fpbmc .029
+    :fpmc .12 ;;.13
+    :fpmc0 0
     
-    :utbmc .01  
-    :utmc -.0012
+    :utbmc .01
+    :utmc  .04 ;;.02
+    :utmc0 0
     
-    :fp-dec 0.01
+    :fp-dec 0.005
     
     :egs .25
     ;:cst t
@@ -25,11 +35,14 @@
     :randomize-time t
     :vpft t
     
-    :max-prep-time-diff 10.0
+    :motor-feature-prep-time 0 ; .05
+    :max-prep-time-diff 10.0  
+    :visual-attention-latency .055 ; .035
 )
 
 (add-dm (goal isa drive))
 (goal-focus goal)
+
 
 (p drive*attend-near
     =goal>
@@ -42,11 +55,13 @@
         state free
         buffer empty
 ==>
+    !eval! (fatigue-reset-percentage)
+    !eval! (fatigue-utility-dec-off)
     +visual-location>
         isa visual-location
         kind near
 )
-;;(spp :u 0)
+;(spp :u 4)
 
 (p drive*process-near-attend-far
     =goal>
@@ -62,6 +77,8 @@
         state free
         buffer empty
 ==>
+    !eval! (fatigue-reset-percentage)
+    !eval! (fatigue-utility-dec-off)
     !bind! =na (image->angle =nx =nd)
     =goal>
         na =na
@@ -69,6 +86,7 @@
         isa visual-location
         kind car
 )
+;(spp :u 4)
 
 (p drive*process-car
     =goal>
@@ -90,6 +108,8 @@
         state free
         buffer empty
 ==>
+    !eval! (fatigue-reset-percentage)
+    !eval! (fatigue-utility-dec-off)
     !bind! =fa (image->angle =fx =fd)
     !bind! =time (mp-time)
     !bind! =dna (- =na =na2)
@@ -116,6 +136,7 @@
         isa move-attention
         screen-pos =visual-location
 )
+;(spp :u 4)
 
 (p drive*process-without-old
     =goal>
@@ -132,6 +153,8 @@
         state free
         buffer empty
 ==>
+    !eval! (fatigue-reset-percentage)
+    !eval! (fatigue-utility-dec-off)
     !bind! =fa (image->angle =fx =fd)
     !bind! =v (get-velocity)
     !bind! =fthw (get-thw =fd =v)
@@ -149,6 +172,7 @@
         isa visual-location
         kind near
 )
+;(spp :u 4)
 
 (p drive*loop-stable
     =goal>
@@ -166,9 +190,72 @@
     !eval! (is-car-stable =na =vna =vfa)
 ==>
     !eval! (fatigue-reset-percentage)
+    !eval! (fatigue-utility-dec-off)
     =goal>
-        na nil
-        fa nil
+        isa wait
+        index 1
+        na =na ; nil
+        fa =fa ;nil
+        na2 =na
+        fa2 =fa
+        fd2 =fd
+        fkind2 =fkind
+        fthw2 =fthw
+        time2 =time
+)
+;(spp :u 4)
+
+(p wait-continue
+    =goal>
+        isa wait
+        index =index
+        na =na ; nil
+        fa =fa ;nil
+        na2 =na
+        fa2 =fa
+        fd2 =fd
+        fkind2 =fkind
+        fthw2 =fthw
+        time2 =time
+    !eval! (< =index 9)
+==>
+    !output! (=index)
+    !bind! =index (+ =index 1)
+    !eval! (fatigue-reset-percentage)
+    !eval! (fatigue-utility-dec-on)
+    =goal>
+        isa wait
+        index =index
+        na =na ; nil
+        fa =fa ;nil
+        na2 =na
+        fa2 =fa
+        fd2 =fd
+        fkind2 =fkind
+        fthw2 =fthw
+        time2 =time     
+)
+
+(p wait-done
+    =goal>
+        isa wait
+        index =index
+        na =na ; nil
+        fa =fa ;nil
+        na2 =na
+        fa2 =fa
+        fd2 =fd
+        fkind2 =fkind
+        fthw2 =fthw
+        time2 =time
+    !eval! (>= =index 9)
+==>
+    !eval! (fatigue-reset-percentage)
+    !eval! (fatigue-utility-dec-on)
+    =goal>
+        isa drive
+        na  nil
+        fa  nil
         na2 =na
         fa2 =fa
         fd2 =fd
@@ -193,6 +280,7 @@
     !eval! (is-car-not-stable =na =vna =vfa)
 ==>
     !eval! (fatigue-reset-percentage)
+    !eval! (fatigue-utility-dec-off)
     =goal>
         na nil
         fa nil
@@ -206,3 +294,4 @@
         isa visual-location
         kind near
 )
+;(spp :u 4)
