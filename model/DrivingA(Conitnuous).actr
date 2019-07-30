@@ -12,7 +12,7 @@
 
 ;; (set-output-dir "./resultDriving/DayA")
 
-(set-task-duration 3600.0) ;; the driving sessions are 4 hours (4*60 * 60 sec)
+(set-task-duration 3600.0) ;; each driving sessions are 1 hours (60 * 60 sec)
 
 (sgp 
     :cst nil
